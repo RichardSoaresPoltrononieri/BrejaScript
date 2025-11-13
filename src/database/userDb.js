@@ -9,9 +9,9 @@ const dynamoDb = new aws.DynamoDB.DocumentClient();
 
 async function salvar(bodyRequest) {
     const encryptPass = encrypt.encrypt(bodyRequest.pass);
-    bodyRequest.id = crypto.randomBytes(32).toString('hex');
-    bodyRequest.ativo = true;
-    bodyRequest.cadastro = new Date().toISOString();
+    bodyRequest.id = crypto.randomBytes(8).toString('hex');
+    bodyRequest.active = true;
+    bodyRequest.DataCadastro = new Date().toISOString();
     bodyRequest.pass = encryptPass;
 
     var params = {
@@ -29,6 +29,26 @@ async function salvar(bodyRequest) {
     }
 }
 
+async function remover(id, email) {
+    var params = {
+        TableName: tableName,
+        Key: { 
+            id: id,
+            email: email
+        }  
+    }
+
+    try {
+        await dynamoDb.delete(params).promise();
+        return true;
+        
+    } catch (error) {
+        console.error("Erro ao remover usuário:", error);
+        return false;
+    }
+}
+
 module.exports = {
-    salvar
+    salvar,
+    remover
 };
