@@ -1,0 +1,30 @@
+{
+  "name": "brejascript",
+  "version": "1.0.0",
+  "description": "backend-serverless",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon src/server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/RichardSoaresPoltrononieri/BrejaScript.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/RichardSoaresPoltrononieri/BrejaScript/issues"
+  },
+  "homepage": "https://github.com/RichardSoaresPoltrononieri/BrejaScript#readme",
+  "dependencies": {
+    "aws-sdk": "^2.1692.0",
+    "dotenv-safe": "^9.1.0",
+    "express": "^5.1.0",
+    "jsonwebtoken": "^9.0.2"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.11"
+  }
+}
