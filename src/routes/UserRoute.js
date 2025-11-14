@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
-const { salvar, remover, alterar } = require('../database/userDb');
+const { salvar, remover, alterar, buscaPorEmailSenha } = require('../database/userDb');
+const { generateToken, verifyToken } = require('../utils/jwt');
 
 
 router.post('/', async (req, res) => {
@@ -28,7 +29,7 @@ router.delete('/', async (req, res) => {
 });
 
 
-router.put('/', async (req, res) => {
+router.put('/', verifyToken, async (req, res) => {
     if (validateRequestBody(req)) {
         const dados = await alterar(req.body);
         if (dados) {
@@ -37,6 +38,18 @@ router.put('/', async (req, res) => {
         return res.status(404).json({mensagem: "Usuário não encontrado."});
     }
     return res.status(400).json({mensagem: "Dados inválidos."});
+});
+
+router.post('/login', async (req, res) => {
+    const dados = await buscaPorEmailSenha(req.body.email, req.body.pass);
+    if (dados) {
+        const token = generateToken(dados.id);
+        dados.token = token;
+        dados.auth = true;
+        return res.json(dados);
+    }
+
+    return res.status(404).json({mensagem: "Usuário não encontrado."});
 });
 
 function validateRequestBody(request) {

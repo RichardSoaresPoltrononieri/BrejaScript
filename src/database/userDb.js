@@ -69,9 +69,35 @@ async function alterar(usuario) {
     }
 }
 
+async function buscaPorEmailSenha(email, senha) {
+    try {
+        var params = {
+            TableName: tableName,
+            FilterExpression: "email = :email",
+            ExpressionAttributeValues: {
+                ":email": email
+            }
+        }
+
+            const dados = await dynamoDb.scan(params).promise();
+
+        if (dados && dados.Items) {
+            const usuario = dados.Items[0];
+            const decrypt = encrypt.getPassDecrypt(usuario.pass);
+            return (senha === decrypt) ? usuario : null;
+        }
+            return null;
+
+    } catch (error) {
+        console.error("Erro ao buscar usuário:", error);
+        return null;
+    };
+}
+
 
 module.exports = {
     salvar,
     remover,
-    alterar
+    alterar,
+    buscaPorEmailSenha
 };
