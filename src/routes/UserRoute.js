@@ -1,24 +1,42 @@
 const express = require('express');
 const router = express.Router();
-const { salvar, remover } = require('../database/userDb');
+const { salvar, remover, alterar } = require('../database/userDb');
 
 
 router.post('/', async (req, res) => {
     if (req.body && req.body.nome && req.body.email && req.body.pass) {
         const cadastro = await salvar(req.body);
-        return res.send(cadastro);
+        if (cadastro && cadastro.id) {
+            return res.status(201).json(cadastro);
+        }
+        return res.status(400).json({mensagem: "Erro ao cadastrar usuário."});
     }
 
-    return res.status(500).json({mensagem: "Usuário não cadastrado. Verifique os dados e tente novamente."});
+    return res.status(400).json({mensagem: "Usuário não cadastrado. Verifique os dados e tente novamente."});
 });
 
 router.delete('/', async (req, res) => {
     if (validateRequestBody(req)) {
-        const sucess = await remover(req.body.id, req.body.email);
-        return res.send({sucess: sucess});
+        const sucesso = await remover(req.body.id, req.body.email);
+        if (sucesso) {
+            return res.json({mensagem: "Usuario removido com sucesso."});
+        }
+        return res.status(404).json({mensagem: "Usuário não encontrado."});
     }
 
-    return res.status(404).json({mensagem: "Usuário não encontrado."});
+    return res.status(400).json({mensagem: "Dados inválidos."});
+});
+
+
+router.put('/', async (req, res) => {
+    if (validateRequestBody(req)) {
+        const dados = await alterar(req.body);
+        if (dados) {
+            return res.json(dados);
+        }
+        return res.status(404).json({mensagem: "Usuário não encontrado."});
+    }
+    return res.status(400).json({mensagem: "Dados inválidos."});
 });
 
 function validateRequestBody(request) {

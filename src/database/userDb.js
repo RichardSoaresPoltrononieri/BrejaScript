@@ -48,7 +48,30 @@ async function remover(id, email) {
     }
 }
 
+async function alterar(usuario) {
+    var params = {
+        TableName: tableName,
+        Key: {"id": usuario.id, "email": usuario.email},
+        UpdateExpression: "set nome = :nome",
+        ExpressionAttributeValues: {
+            ":nome": usuario.nome
+        },
+        ReturnValues: "ALL_NEW"
+    };
+    try {
+        const dados = await dynamoDb.update(params).promise();
+        return dados;
+        
+    } catch (error) {
+        console.error("Erro ao alterar usuário:", error);
+        console.error("Parâmetros enviados:", JSON.stringify(params, null, 2));
+        return false;
+    }
+}
+
+
 module.exports = {
     salvar,
-    remover
+    remover,
+    alterar
 };
